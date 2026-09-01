@@ -335,8 +335,8 @@ mod inner {
         let mut smart_space_punctuation_val_expr = None;
 
         let mut user_cfg_char_to_output: HashMap<char, Vec<ZchOutput>> = HashMap::default();
-        let mut pairs = exprs[2..].chunks_exact(2);
-        for pair in pairs.by_ref() {
+        let pairs = exprs[2..].as_chunks::<2>();
+        for pair in pairs.0.iter() {
             let config_name = &pair[0];
             let config_value = &pair[1];
 
@@ -411,7 +411,7 @@ mod inner {
                         );
                     }
                     key_name_mappings_seen = true;
-                    let mut mappings = config_value
+                    let mappings = config_value
                         .list(s.vars())
                         .ok_or_else(|| {
                             anyhow_expr!(
@@ -419,9 +419,9 @@ mod inner {
                                 "{KEY_NAME_MAPPINGS} must be followed by a list"
                             )
                         })?
-                        .chunks_exact(2);
+                        .as_chunks::<2>();
 
-                    for mapping_pair in mappings.by_ref() {
+                    for mapping_pair in mappings.0.iter() {
                         let input = mapping_pair[0]
                             .atom(None)
                             .ok_or_else(|| {
@@ -512,7 +512,7 @@ mod inner {
                         }
                     }
 
-                    let rem = mappings.remainder();
+                    let rem = mappings.1;
                     if !rem.is_empty() {
                         bail_expr!(&rem[0], "zippy input is missing its output mapping");
                     }
@@ -521,7 +521,7 @@ mod inner {
             }
         }
 
-        let rem = pairs.remainder();
+        let rem = pairs.1;
         if !rem.is_empty() {
             bail_expr!(&rem[0], "zippy config name is missing its value");
         }

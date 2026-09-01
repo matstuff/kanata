@@ -18,7 +18,7 @@ pub(crate) fn parse_defchordv2(
         );
     }
 
-    let mut chunks = exprs[1..].chunks_exact(5);
+    let chunks = exprs[1..].as_chunks::<5>();
     let mut chords_container = ChordsForKeys::<'static, KanataCustom> {
         mapping: FxHashMap::default(),
     };
@@ -26,7 +26,7 @@ pub(crate) fn parse_defchordv2(
     let mut all_participating_key_sets = FxHashSet::default();
 
     let all_chords = chunks
-        .by_ref()
+        .0.iter()
         .flat_map(|chunk| match chunk[0] {
             // Match a line like
             // (include filename.txt) () 100 all-released (layer1 layer2)
@@ -80,7 +80,7 @@ pub(crate) fn parse_defchordv2(
                 .push(s.a.sref(chord.clone()));
         }
     }
-    let rem = chunks.remainder();
+    let rem = chunks.1;
     if !rem.is_empty() {
         bail_expr!(
             rem.last().unwrap(),

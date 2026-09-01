@@ -142,12 +142,12 @@ pub(crate) fn parse_layers(
             }
             LayerExprs::CustomMapping(layer) => {
                 // Parse actions as input output pairs
-                let mut pairs = layer[2..].chunks_exact(2);
+                let pairs = layer[2..].as_chunks::<2>();
                 let mut layer_mapped_keys = HashSet::default();
                 let mut defsrc_anykey_used = false;
                 let mut unmapped_anykey_used = false;
                 let mut both_anykey_used = false;
-                for pair in pairs.by_ref() {
+                for pair in pairs.0.iter() {
                     let input = &pair[0];
                     let action = &pair[1];
 
@@ -220,7 +220,7 @@ pub(crate) fn parse_layers(
                         layers_cfg[layer_level][0][usize::from(input_key)] = *action;
                     }
                 }
-                let rem = pairs.remainder();
+                let rem = pairs.1;
                 if !rem.is_empty() {
                     bail_expr!(&rem[0], "input must by followed by an action");
                 }

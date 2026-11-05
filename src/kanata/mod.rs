@@ -3112,7 +3112,7 @@ pub fn clean_state(kanata: &Arc<Mutex<Kanata>>, tick: u128) -> Result<()> {
         if let Some(gamepad) = &mut k.gamepad {
             gamepad.release_all(&mut edges);
         }
-        k.apply_gamepad_edges(&edges)?;
+        k.apply_gamepad_edges()?;
     }
     k.tick_ms(tick, &None)?;
     #[cfg(not(any(target_os = "linux", target_os = "android")))]
